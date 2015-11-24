@@ -3,7 +3,7 @@
 
   "name": "Svn checker",
   "description": "This extension shows svn information about deployed version",
-  "version": "1.0",
+  "version": "0.0.1.0",
 
   "page_action": {
     "default_icon": "icon.png"
