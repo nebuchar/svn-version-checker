@@ -32,6 +32,10 @@ function getSvnInfo(url, callback, errorCallback) {
 // Called when the url of a tab changes.
 function checkForValidUrl(tabId, changeInfo, tab) {
     // If the tabs url starts with "http://specificsite.com"...
+    var validUrls;
+    chrome.storage.sync.get('validUrls', function(items) {
+        validUrls = items.validUrls;
+    });
     if (tab.url.search('/*(es|br|it|mex).privalia.com*/') != -1) {
         // ... show the page action.
         chrome.pageAction.show(tabId);
