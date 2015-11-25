@@ -9,12 +9,6 @@
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
-  "content_scripts": [
-    {
-      "matches": ["http://*.privalia.com/*"],
-      "js": ["dom.js"]
-    }
-  ],
   "options_ui": {
     "page": "options.html",
     "chrome_style": true

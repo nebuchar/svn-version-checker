@@ -1,5 +1,5 @@
 function getSvnInfo(url, callback, errorCallback) {
-    var searchUrl = 'http:' + url + 'svninfo';
+    var searchUrl = 'http:' + url + 'svnversion';
 
     console.log(searchUrl);
     var x = new XMLHttpRequest();
@@ -12,15 +12,6 @@ function getSvnInfo(url, callback, errorCallback) {
             errorCallback('No response!');
             //return;
         }
-        /*
-        var firstResult = response.responseData.results[0];
-        var imageUrl = firstResult.tbUrl;
-        var width = parseInt(firstResult.tbWidth);
-        var height = parseInt(firstResult.tbHeight);
-        console.assert(
-            typeof imageUrl == 'string' && !isNaN(width) && !isNaN(height),
-            'Unexpected respose from the Google Image Search API!');
-        */
         callback(response);
     };
     x.onerror = function() {
@@ -31,26 +22,31 @@ function getSvnInfo(url, callback, errorCallback) {
 
 // Called when the url of a tab changes.
 function checkForValidUrl(tabId, changeInfo, tab) {
-    // If the tabs url starts with "http://specificsite.com"...
-    var validUrls;
-    chrome.storage.sync.get('validUrls', function(items) {
-        validUrls = items.validUrls;
+    chrome.storage.sync.get(null, function(items) {
+        var validUrls = items.validUrls.split("\n");
+        var length = validUrls.length;
+        var found = false;
+        var url = '';
+        for(var i=0; i < length; i++){
+            if (tab.url.search(validUrls[i]) != -1) {
+                found = true;
+                url = tab.url.match(validUrls[i]);
+            }
+        }
+        if (found) {
+            // ... show the page action.
+            chrome.pageAction.show(tabId);
+            // Send a request to the content script.
+            getSvnInfo(url[0], function(response){
+                //Test response
+                var response = new Object();
+                response.svntag = 'test tag';
+            }, function(errorMessage){
+                console.error(errorMessage);
+            });
+        }
     });
-    if (tab.url.search('/*(es|br|it|mex).privalia.com*/') != -1) {
-        // ... show the page action.
-        chrome.pageAction.show(tabId);
-        // Send a request to the content script.
 
-        var url = tab.url.match('/*(es|br|it|mex).privalia.com*/');
-        getSvnInfo(url[0], function(response){
-            //Test response
-            var response = new Object();
-            response.svntag = 'test tag';
-            chrome.tabs.sendMessage(tabId, {response: response} );
-        }, function(errorMessage){
-            console.error(errorMessage);
-        });
-    }
 };
 
 // Listen for any changes to the URL of any tab.
