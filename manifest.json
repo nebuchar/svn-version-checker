@@ -21,6 +21,6 @@
     "activeTab",
     "tabs",
     "storage",
-    "*://*.privalia.com/*"
+    "*://*/*"
   ]
 }
